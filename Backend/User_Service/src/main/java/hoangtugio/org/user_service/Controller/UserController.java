@@ -8,6 +8,8 @@ import hoangtugio.org.user_service.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,11 +24,11 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-//    @GetMapping("/me")
-//    public User getCurrentUser() {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        return  userRepository.findByEmail(auth.getName()).orElse(null);
-//    }
+    @GetMapping("/me")
+    public User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return  userRepository.findByEmail(auth.getName()).orElse(null);
+    }
 
     @PostMapping("/register")
     public User createUser( @RequestBody User user) {
@@ -39,13 +41,13 @@ public class UserController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/{email}")
     public User updateUser(@PathVariable String email,  @RequestBody User user) {
         User existingUser = userRepository.findByEmail(email).orElse(null);
         if (existingUser == null) {
             throw new RuntimeException("User with email " + email + " not found");
         }
-        user.setEmail(email);
+        // Update the user details
         return userService.update(user);
     }
 
