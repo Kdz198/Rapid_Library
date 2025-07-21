@@ -1,0 +1,56 @@
+package hoangtugio.org.user_service.Controller;
+
+
+
+import hoangtugio.org.user_service.Model.User;
+import hoangtugio.org.user_service.Repository.UserRepository;
+import hoangtugio.org.user_service.Service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+//    @GetMapping("/me")
+//    public User getCurrentUser() {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        return  userRepository.findByEmail(auth.getName()).orElse(null);
+//    }
+
+    @PostMapping("/register")
+    public User createUser( @RequestBody User user) {
+        return userService.save(user);
+    }
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.findAll();
+    }
+
+
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable String email,  @RequestBody User user) {
+        User existingUser = userRepository.findByEmail(email).orElse(null);
+        if (existingUser == null) {
+            throw new RuntimeException("User with email " + email + " not found");
+        }
+        user.setEmail(email);
+        return userService.update(user);
+    }
+
+    @DeleteMapping("/{email}")
+    public void deleteUser(@PathVariable String email) throws Exception {
+        userService.delete(email);
+    }
+}
