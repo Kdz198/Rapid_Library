@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminNavbar from '../components/AdminNavbar';
@@ -226,3 +227,5 @@ const BookPage = () => {
 };
 
 export default BookPage;
+=======
+>>>>>>> 55c356e263bd4314c7c4746e432b35728f4d5f47
