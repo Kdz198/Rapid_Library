@@ -1,19 +1,21 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Footer from "./components/layout/Footer";
-import Header from "./components/layout/Header";
-import BookPage from "./pages/BookPage";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import BookPage from './pages/BookPage';
+import LoginPage from './pages/LoginPage';
+import PrivateRoute from './components/PrivateRoute';
+import UserManagement from './pages/UserManagement';
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<BookPage />} />
-        </Routes>
-        <Footer />
-      </Router>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={    
+          <PrivateRoute>
+            <BookPage />
+          </PrivateRoute>} />
+          <Route path="/users" element={<UserManagement />} />
+      </Routes>
+    </Router>
   );
 }
 
