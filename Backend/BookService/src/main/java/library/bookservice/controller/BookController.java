@@ -46,8 +46,9 @@ public class BookController {
         return bookService.borrowBook(dto);
     }
 
-    @GetMapping("/return")
+    @PostMapping("/return")
     public boolean returnBook(@RequestBody List<BookDto> dto) {
+        System.out.println("Returning books: " + dto);
         return bookService.returnBook(dto);
     }
 }

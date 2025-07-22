@@ -58,7 +58,7 @@ public class BookService {
     public boolean borrowBook(List<BookDto> listBorrowedBook) {
         for(BookDto bookDto : listBorrowedBook) {
             Book book = getBookById(bookDto.getId());
-            if(book.isStatus() && book.getAvailable()>bookDto.getQuantity()) {
+            if(book.isStatus() && book.getAvailable()>=bookDto.getQuantity()) {
                 book.setAvailable(book.getAvailable()-bookDto.getQuantity());
                 bookRepo.save(book);
             }
