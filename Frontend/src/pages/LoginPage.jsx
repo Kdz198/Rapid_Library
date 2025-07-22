@@ -15,7 +15,7 @@ const LoginPage = () => {
 
     try {
       const res = await axios.post(
-        "https://336907d86ab7.ngrok-free.app/api/auth/login",
+        "http://localhost:8080/api/auth/login",
         null, // Request body rỗng
         {
           params: {
@@ -54,14 +54,7 @@ const LoginPage = () => {
           </div>
           <div className="mb-3">
             <label className="form-label">Mật khẩu</label>
-            <input
-              type="password"
-              className="form-control"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mật khẩu"
-              required
-            />
+            <input type="text" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mật khẩu" />
           </div>
           <button type="submit" className="btn btn-primary w-100">
             Đăng nhập

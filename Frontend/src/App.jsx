@@ -6,6 +6,7 @@ import BookPage from "./pages/manager/BookPage";
 import BorrowerPage from "./pages/manager/BorrowerPage";
 import UserManagement from "./pages/manager/UserManagement";
 import OrderPage from "./pages/OrderPage";
+import UserLayout from "./pages/UserLayout";
 import UserPage from "./pages/UserPage";
 
 function App() {
@@ -18,10 +19,27 @@ function App() {
           path="/"
           element={
             <PrivateRoute>
-              <UserPage />
+              <UserLayout />
             </PrivateRoute>
           }
-        />
+        >
+          <Route
+            index
+            element={
+              <PrivateRoute>
+                <UserPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="history"
+            element={
+              <PrivateRoute>
+                <HistoryPage />
+              </PrivateRoute>
+            }
+          />
+        </Route>
         <Route
           path="/orders"
           element={

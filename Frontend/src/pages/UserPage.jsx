@@ -1,13 +1,18 @@
 import axios from "axios";
+import { Eye, EyeOff, User } from "lucide-react"; // Thêm Eye, EyeOff từ lucide-react
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UserNavbar from "../components/UserNavbar";
 
 const UserPage = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "" });
+  const [isEditing, setIsEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Trạng thái hiển thị/ẩn mật khẩu
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "", // Hiển thị mặc định là "***..."
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,17 +24,22 @@ const UserPage = () => {
           return;
         }
 
-        const res = await axios.get("https://336907d86ab7.ngrok-free.app/api/users/me", {
+        const res = await axios.get("http://localhost:8080/api/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
             "ngrok-skip-browser-warning": "true",
           },
+          credentials: "include",
         });
 
         setUser(res.data);
-        setFormData({ name: res.data.name || "", email: res.data.email || "" });
+        setFormData({
+          name: res.data.name || "",
+          email: res.data.email || "",
+          password: res.data.password || "Null",
+        });
       } catch (err) {
         console.error(err);
         setError("Không thể lấy thông tin người dùng!");
@@ -52,87 +62,67 @@ const UserPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      // Placeholder for PUT request
-      await axios.put("https://336907d86ab7.ngrok-free.app/api/users/me", formData, {
+      // Chỉ gửi mật khẩu nếu người dùng nhập giá trị mới (khác "***...")
+      const updatedData = { ...formData };
+      if (updatedData.password === formData.password || updatedData.password === "") {
+        delete updatedData.password; // Không gửi mật khẩu nếu không thay đổi
+      }
+
+      await axios.put(`http://localhost:8080/api/users/${user.email}`, updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
           "ngrok-skip-browser-warning": "true",
         },
+        credentials: "include",
       });
-      setUser({ ...user, ...formData });
-      setIsModalOpen(false);
+
+      setUser({ ...user, ...updatedData });
+      setIsEditing(false);
+      // Reset password về "***..." sau khi lưu
+      setFormData((prev) => ({ ...prev, password: "***..." }));
     } catch (err) {
       console.error(err);
       setError("Không thể cập nhật thông tin!");
     }
   };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+    // Reset password về "***..." khi hủy hoặc mở form chỉnh sửa
+    if (isEditing) {
+      setFormData((prev) => ({ ...prev, password: "***..." }));
+    }
+  };
+
+  const toggleShowPassword = () => setShowPassword(!showPassword);
 
   if (!user && !error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
+      <div className="flex items-center justify-center h-full">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-indigo-600"></div>
       </div>
     );
   }
 
   return (
-    <>
-      <UserNavbar />
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 p-4">
-        <div className="relative bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full transform transition-all duration-300 hover:scale-105">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-50"></div>
+    <div className="relative bg-white rounded-2xl shadow-2xl p-10 max-w-lg w-full transform transition-all duration-300 mx-auto">
+      <h2 className="text-4xl font-bold text-center text-gray-800 mb-8 relative z-10">Hồ Sơ Người Dùng</h2>
 
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6 relative z-10">Hồ Sơ Người Dùng</h2>
-
-          {error && <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg text-center relative z-10 animate-fade-in">{error}</div>}
-
-          {user && (
-            <div className="text-center relative z-10">
-              <div className="mb-6">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="Avatar"
-                  className="rounded-full mx-auto shadow-lg border-4 border-white transition-transform duration-300 hover:scale-110"
-                  style={{ width: "120px", height: "120px" }}
-                />
-              </div>
-              <h4 className="text-2xl font-semibold text-gray-900 mb-2">{user.name || "Không có tên"}</h4>
-              <p className="text-gray-600 mb-2">
-                <span className="font-medium">Email:</span> {user.email}
-              </p>
-              <p className="text-gray-600 mb-2">
-                <span className="font-medium">Vai trò:</span> {user.role || "Người dùng"}
-              </p>
-              <p className="text-gray-600 mb-6">
-                <span className="font-medium">Ngày tham gia:</span> {new Date(user.createdAt).toLocaleDateString() || "N/A"}
-              </p>
-              <button
-                className="mt-4 px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-medium shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                onClick={openModal}
-              >
-                Chỉnh sửa hồ sơ
-              </button>
+      {error && <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg text-center relative z-10 animate-fade-in">{error}</div>}
+      {user && (
+        <div className="relative z-10">
+          <div className="flex flex-col items-center mb-8">
+            <div className="rounded-full bg-indigo-100 p-4 mb-4 shadow-lg">
+              <User className="w-16 h-16 text-indigo-600" />
             </div>
-          )}
-        </div>
-      </div>
+            <h4 className="text-3xl font-semibold text-gray-900 mb-4">{user.name || "Không có tên"}</h4>
+          </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full relative transform transition-all duration-300 scale-100 animate-fade-in">
-            <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-700" onClick={closeModal}>
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Chỉnh sửa hồ sơ</h3>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
+          {isEditing ? (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
                 <label className="block text-gray-700 font-medium mb-2" htmlFor="name">
                   Tên
                 </label>
@@ -141,11 +131,11 @@ const UserPage = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="Nhập tên của bạn"
                 />
               </div>
-              <div className="mb-6">
+              <div>
                 <label className="block text-gray-700 font-medium mb-2" htmlFor="email">
                   Email
                 </label>
@@ -153,31 +143,65 @@ const UserPage = () => {
                   type="email"
                   name="email"
                   value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  readOnly
+                  className="w-full px-4 py-3 border rounded-lg bg-gray-100 cursor-not-allowed"
                   placeholder="Nhập email của bạn"
                 />
+              </div>
+              <div className="relative">
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="password">
+                  Mật khẩu
+                </label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Nhập mật khẩu của bạn"
+                />
+                <button type="button" className="absolute right-3 top-10 text-gray-600 hover:text-gray-800" onClick={toggleShowPassword}>
+                  {showPassword ? <EyeOff className="w-5 h-5 mt-2" /> : <Eye className="w-5 h-5 mt-2" />}
+                </button>
               </div>
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                  onClick={closeModal}
+                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                  onClick={toggleEdit}
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all"
+                  className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all"
                 >
                   Lưu
                 </button>
               </div>
             </form>
-          </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-lg text-gray-600">
+                <span className="font-medium">Email:</span> {user.email}
+              </p>
+              <p className="text-lg text-gray-600">
+                <span className="font-medium">Vai trò:</span> {user.role || "Người dùng"}
+              </p>
+              <p className="text-lg text-gray-600">
+                <span className="font-medium">Trạng thái:</span> {user.status || "N/A"}
+              </p>
+              <button
+                className="mt-6 w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                onClick={toggleEdit}
+              >
+                Chỉnh sửa hồ sơ
+              </button>
+            </div>
+          )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
