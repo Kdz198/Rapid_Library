@@ -55,7 +55,7 @@ public class BookService {
         else throw new CustomException("Book does not exist !!", HttpStatus.NOT_FOUND);
     }
 
-    public void borrowBook(List<BookDto> listBorrowedBook) {
+    public boolean borrowBook(List<BookDto> listBorrowedBook) {
         for(BookDto bookDto : listBorrowedBook) {
             Book book = getBookById(bookDto.getId());
             if(book.isStatus() && book.getAvailable()>bookDto.getQuantity()) {
@@ -63,16 +63,18 @@ public class BookService {
                 bookRepo.save(book);
             }
             else{
-                throw new CustomException("Book is not available !!", HttpStatus.CONFLICT);
+               return false;
             }
         }
+        return true;
     }
 
-    public void returnBook(List<BookDto> listReturnedBook) {
+    public boolean returnBook(List<BookDto> listReturnedBook) {
         for(BookDto bookDto : listReturnedBook) {
             Book book = getBookById(bookDto.getId());
             book.setAvailable(book.getAvailable()+bookDto.getQuantity());
             bookRepo.save(book);
         }
+        return true;
     }
 }

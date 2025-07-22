@@ -41,12 +41,12 @@ public class BookController {
     }
 
     @GetMapping("/borrow")
-    public void borrowBook(@RequestBody List<BookDto> dto) {
-        bookService.borrowBook(dto);
+    public boolean borrowBook(@RequestBody List<BookDto> dto) {
+        return bookService.borrowBook(dto);
     }
 
     @GetMapping("/return")
-    public void returnBook(@RequestBody List<BookDto> dto) {
-        bookService.returnBook(dto);
+    public boolean returnBook(@RequestBody List<BookDto> dto) {
+        return bookService.returnBook(dto);
     }
 }
