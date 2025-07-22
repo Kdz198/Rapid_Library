@@ -3,6 +3,7 @@ import BookPage from "./pages/BookPage";
 import BorrowerPage from "./pages/BorrowerPage";
 import LoginPage from "./pages/LoginPage";
 import UserManagement from "./pages/manager/UserManagement";
+import OrderPage from "./pages/OrderPage";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<BookPage />} />
         <Route path="/borrowers" element={<BorrowerPage />} />
         <Route path="/users" element={<UserManagement />} />
+        <Route path="/orders" element={<OrderPage />} />
       </Routes>
     </Router>
   );

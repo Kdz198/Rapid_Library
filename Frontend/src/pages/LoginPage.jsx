@@ -14,12 +14,11 @@ const LoginPage = () => {
     setError("");
 
     const HeadersInit = {
-      "ngrok-skip-browser-warning": "true",
       "Content-Type": "application/json",
     };
     try {
       const res = await axios.post(
-        "https://336907d86ab7.ngrok-free.app/api/auth/login",
+        "http://localhost:8080/api/auth/login",
         null, // Request body rỗng
         {
           params: {
