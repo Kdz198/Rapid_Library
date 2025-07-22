@@ -26,23 +26,25 @@ public class LoanService {
     public record BookDTO (int id, int quantity) {}
 
 
-    public boolean borrowBook(int userId, Map<Integer, Integer> books, LocalDate dueDate) {
+    public boolean borrowBook(String userEmail, Map<Integer, Integer> books, LocalDate dueDate) {
         List<BookDTO> bookList = books.entrySet().stream()
                 .map(entry -> new BookDTO(entry.getKey(), entry.getValue()))
                 .toList();
         System.out.println(bookList);
-        System.out.println( "Borrowing books for user ID: " + userId);
-        boolean result = restTemplate.postForObject( "http://BOOK-SERVICE/api/books/borrow", bookList, Boolean.class);
+        System.out.println( "Borrowing books for user Email: " + userEmail);
+        boolean result = Boolean.TRUE.equals(restTemplate.postForObject("http://BOOK-SERVICE/api/books/borrow", bookList, Boolean.class));
         System.out.println(result);
-//        // Create a new loan record
-//        Loan loan = new Loan();
-//        loan.setUserId(userId);
-//        loan.setBooks(books);
-//        loan.setDueDate(dueDate);
-//
-//        // Save the loan record to the database
-//        loanRepository.save(loan);
-        return true;
+        if ( result) {
+            Loan loan = new Loan();
+            loan.setUserEmail(userEmail);
+            loan.setBooks(books);
+            loan.setDueDate(dueDate);
+
+
+            loanRepository.save(loan);
+            return true;
+        }
+        return false;
 
     }
 

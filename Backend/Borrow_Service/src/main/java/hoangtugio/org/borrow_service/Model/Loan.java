@@ -18,7 +18,7 @@ public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-    private int userId;
+    private String userEmail;
 
     @ElementCollection
     @CollectionTable(name = "loan_items", joinColumns = @JoinColumn(name = "loan_id"))

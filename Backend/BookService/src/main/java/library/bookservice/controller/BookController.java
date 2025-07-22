@@ -40,8 +40,9 @@ public class BookController {
          bookService.setStatus(id);
     }
 
-    @GetMapping("/borrow")
+    @PostMapping("/borrow")
     public boolean borrowBook(@RequestBody List<BookDto> dto) {
+        System.out.println("Borrowing books: " + dto);
         return bookService.borrowBook(dto);
     }
 

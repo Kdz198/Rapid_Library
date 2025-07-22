@@ -21,11 +21,11 @@ public class LoanController {
         return loanService.getAllLoans();
     }
 
-    public record  LoanRequest(int userId, Map<Integer, Integer> books, LocalDate dueDate) {}
+    public record  LoanRequest(String userEmail, Map<Integer, Integer> books, LocalDate dueDate) {}
 
     @PostMapping
     public boolean borrowBook( @RequestBody LoanRequest loanRequest) {
-       return loanService.borrowBook(loanRequest.userId, loanRequest.books, loanRequest.dueDate);
+       return loanService.borrowBook(loanRequest.userEmail, loanRequest.books, loanRequest.dueDate);
     }
 
     @PostMapping("/return")
