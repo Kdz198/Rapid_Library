@@ -2,6 +2,7 @@ package library.bookservice.controller;
 
 import jakarta.validation.Valid;
 import library.bookservice.model.Book;
+import library.bookservice.model.BookDto;
 import library.bookservice.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,5 +38,15 @@ public class BookController {
     @GetMapping("/set-status/{id}")
     public void setBookStatus(@PathVariable int id) {
          bookService.setStatus(id);
+    }
+
+    @GetMapping("/borrow")
+    public void borrowBook(@RequestBody List<BookDto> dto) {
+        bookService.borrowBook(dto);
+    }
+
+    @GetMapping("/return")
+    public void returnBook(@RequestBody List<BookDto> dto) {
+        bookService.returnBook(dto);
     }
 }
