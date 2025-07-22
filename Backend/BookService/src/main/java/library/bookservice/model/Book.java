@@ -43,12 +43,17 @@ public class Book {
     @Column(name = "Status")
     private boolean status;
 
-    public Book(String title, String author, int yearOfPublisher, int quantity, int available, boolean status) {
+    @JoinColumn(name = "CateId")
+    @ManyToOne
+    private Category category;
+
+    public Book(String title, String author, int yearOfPublisher, int quantity, int available, boolean status, Category category) {
         this.title = title;
         this.author = author;
         this.yearOfPublisher = yearOfPublisher;
         this.quantity = quantity;
         this.available = available;
         this.status = status;
+        this.category = category;
     }
 }
