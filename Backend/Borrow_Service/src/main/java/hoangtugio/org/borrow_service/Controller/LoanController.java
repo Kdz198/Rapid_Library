@@ -24,8 +24,8 @@ public class LoanController {
     public record  LoanRequest(int userId, Map<Integer, Integer> books, LocalDate dueDate) {}
 
     @PostMapping
-    public void borrowBook( @RequestBody LoanRequest loanRequest) {
-        loanService.borrowBook(loanRequest.userId, loanRequest.books, loanRequest.dueDate);
+    public boolean borrowBook( @RequestBody LoanRequest loanRequest) {
+       return loanService.borrowBook(loanRequest.userId, loanRequest.books, loanRequest.dueDate);
     }
 
     @PostMapping("/return")

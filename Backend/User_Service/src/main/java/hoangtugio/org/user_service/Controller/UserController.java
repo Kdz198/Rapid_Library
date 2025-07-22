@@ -5,6 +5,7 @@ package hoangtugio.org.user_service.Controller;
 import hoangtugio.org.user_service.Model.User;
 import hoangtugio.org.user_service.Repository.UserRepository;
 import hoangtugio.org.user_service.Service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
@@ -24,6 +25,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/me")
     public User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -35,12 +37,13 @@ public class UserController {
         return userService.save(user);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public List<User> getAllUsers() {
         return userService.findAll();
     }
 
-
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{email}")
     public User updateUser(@PathVariable String email,  @RequestBody User user) {
         User existingUser = userRepository.findByEmail(email).orElse(null);
@@ -51,6 +54,7 @@ public class UserController {
         return userService.update(user);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{email}")
     public void deleteUser(@PathVariable String email) throws Exception {
         userService.delete(email);
