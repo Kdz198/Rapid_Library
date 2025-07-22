@@ -5,6 +5,7 @@ import BookPage from "./pages/manager/BookPage";
 import BorrowerPage from "./pages/manager/BorrowerPage";
 import UserManagement from "./pages/manager/UserManagement";
 import OrderPage from "./pages/OrderPage";
+import UserPage from "./pages/UserPage";
 
 function App() {
   return (
@@ -15,12 +16,20 @@ function App() {
           path="/"
           element={
             <PrivateRoute>
+              <UserPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <PrivateRoute>
               <OrderPage />
             </PrivateRoute>
           }
         />
         <Route
-          path="/manager/books"
+          path="/manager"
           element={
             <PrivateRoute>
               <BookPage />

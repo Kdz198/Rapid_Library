@@ -1,15 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminNavbar = () => {
-  return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm px-4">
-      <div className="container-fluid">
-        {/* Logo / Tên thư viện */}
-        <span className="navbar-brand fw-bold text-primary fs-4">
-          📚 Thư viện FPT
-        </span>
+  const navigate = useNavigate();
 
-        {/* Nút toggle cho mobile */}
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
+  return (
+    <nav className="navbar navbar-expand-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg px-4 py-3">
+      <div className="container-fluid">
+        <span className="navbar-brand fw-bold text-2xl tracking-tight">📚 Thư viện FPT</span>
+
         <button
           className="navbar-toggler"
           type="button"
@@ -22,37 +25,33 @@ const AdminNavbar = () => {
           <span className="navbar-toggler-icon" />
         </button>
 
-        {/* Navbar chính */}
         <div className="collapse navbar-collapse" id="adminNavbar">
-          {/* Link căn giữa */}
-          <ul className="navbar-nav mx-auto gap-3">
+          <ul className="navbar-nav mx-auto gap-4">
             <li className="nav-item">
-              <Link className="nav-link text-dark fw-semibold" to="/">
+              <Link className="nav-link text-white hover:bg-blue-700 px-3 py-2 rounded-md transition-colors duration-200" to="/">
                 Quản lý sách
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link text-dark fw-semibold" to="/borrowers">
+              <Link className="nav-link text-white hover:bg-blue-700 px-3 py-2 rounded-md transition-colors duration-200" to="/borrowers">
                 Người mượn
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link text-dark fw-semibold" to="/users">
-                Quản lí Người dùng
+              <Link className="nav-link text-white hover:bg-blue-700 px-3 py-2 rounded-md transition-colors duration-200" to="/users">
+                Quản lý người dùng
               </Link>
             </li>
           </ul>
 
-          {/* Đăng xuất nằm góc phải */}
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link
-                className="nav-link text-danger fw-semibold"
-                to="/login"
-                onClick={() => localStorage.clear()}
+              <button
+                className="nav-link text-white fw-semibold btn btn-link hover:text-red-300 transition-colors duration-200"
+                onClick={handleLogout}
               >
                 Đăng xuất
-              </Link>
+              </button>
             </li>
           </ul>
         </div>
