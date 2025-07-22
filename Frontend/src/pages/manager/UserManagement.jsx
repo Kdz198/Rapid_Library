@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
-import AdminNavbar from "../components/AdminNavbar";
+import { useEffect, useState } from "react";
+import AdminNavbar from "/src/components/AdminNavbar";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -26,12 +26,11 @@ const UserManagement = () => {
     }
   }, []);
 
-
   const handleUpdate = (user) => {
     console.log("Cập nhật:", user);
   };
 
-const handleDelete = (email) => {
+  const handleDelete = (email) => {
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("Không tìm thấy token.");
@@ -80,16 +79,10 @@ const handleDelete = (email) => {
         <td>{user.status}</td>
         <td>{user.role}</td>
         <td className="text-center">
-          <button
-            className="btn btn-sm btn-outline-primary me-2"
-            onClick={() => handleUpdate(user)}
-          >
+          <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleUpdate(user)}>
             Cập nhật
           </button>
-          <button
-            className="btn btn-sm btn-outline-danger"
-            onClick={() => handleDelete(user.email)}
-          >
+          <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(user.email)}>
             Xóa
           </button>
         </td>
@@ -99,28 +92,28 @@ const handleDelete = (email) => {
 
   return (
     <>
-    <AdminNavbar />
-    <div className="container mt-4">
-      <h2 className="mb-4 text-primary fw-bold">Quản lý người dùng</h2>
-      <div className="table-responsive">
-        <table className="table table-bordered table-hover shadow-sm">
-          <thead className="table-light">
-            <tr>
-              <th>Email</th>
-              <th>Họ tên</th>
-              <th>Mật khẩu</th>
-              <th>Trạng thái</th>
-              <th>Vai trò</th>
-              <th className="text-center">Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Chỉ cần gọi hàm render ở đây */}
-            {renderUserRows()}
-          </tbody>
-        </table>
+      <AdminNavbar />
+      <div className="container mt-4">
+        <h2 className="mb-4 text-primary fw-bold">Quản lý người dùng</h2>
+        <div className="table-responsive">
+          <table className="table table-bordered table-hover shadow-sm">
+            <thead className="table-light">
+              <tr>
+                <th>Email</th>
+                <th>Họ tên</th>
+                <th>Mật khẩu</th>
+                <th>Trạng thái</th>
+                <th>Vai trò</th>
+                <th className="text-center">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Chỉ cần gọi hàm render ở đây */}
+              {renderUserRows()}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
     </>
   );
 };
