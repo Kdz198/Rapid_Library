@@ -3,6 +3,7 @@ package library.bookservice.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.hibernate.annotations.Nationalized;
 
 @Entity
 @Data
@@ -17,9 +18,11 @@ public class Category {
 
     @NotNull
     @Column(name = "Name")
+    @Nationalized
     private String name;
 
     @Column(name = "Description")
+    @Nationalized
     private String description;
 
     public Category(String name, String description) {
