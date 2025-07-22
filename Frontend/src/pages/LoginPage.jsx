@@ -32,6 +32,7 @@ const LoginPage = () => {
       );
 
       localStorage.setItem("token", res.data);
+      console.log("Đăng nhập thành công:", res.data);
       navigate("/");
     } catch (err) {
       console.error(err);

@@ -16,8 +16,11 @@ const UserNavbar = () => {
 
         {/* Menu chính */}
         <div className="hidden md:flex space-x-6">
-          <Link to="/user" className="text-white hover:bg-green-600 px-4 py-2 rounded-lg transition-all duration-200 font-semibold">
+          <Link to="/" className="text-white hover:bg-green-600 px-4 py-2 rounded-lg transition-all duration-200 font-semibold">
             Thông tin cá nhân
+          </Link>
+          <Link to="/history" className="text-white hover:bg-green-600 px-4 py-2 rounded-lg transition-all duration-200 font-semibold">
+            Lịch sử mượn sách
           </Link>
           <Link to="/orders" className="text-white hover:bg-green-600 px-4 py-2 rounded-lg transition-all duration-200 font-semibold">
             Danh sách sách
@@ -43,8 +46,11 @@ const UserNavbar = () => {
 
       {/* Mobile Menu */}
       <div id="mobile-menu" className="md:hidden hidden mt-4 space-y-2">
-        <Link to="/user" className="block text-white hover:bg-green-600 px-4 py-2 rounded-lg transition-all duration-200 font-semibold">
+        <Link to="/" className="block text-white hover:bg-green-600 px-4 py-2 rounded-lg transition-all duration-200 font-semibold">
           Thông tin cá nhân
+        </Link>
+        <Link to="/history" className="text-white hover:bg-green-600 px-4 py-2 rounded-lg transition-all duration-200 font-semibold">
+          Lịch sử mượn sách
         </Link>
         <Link to="/orders" className="block text-white hover:bg-green-600 px-4 py-2 rounded-lg transition-all duration-200 font-semibold">
           Danh sách sách

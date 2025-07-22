@@ -1,5 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
+import HistoryPage from "./pages/HistoryPage";
 import LoginPage from "./pages/LoginPage";
 import BookPage from "./pages/manager/BookPage";
 import BorrowerPage from "./pages/manager/BorrowerPage";
@@ -11,6 +12,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* User Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/"
@@ -28,6 +30,15 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/history"
+          element={
+            <PrivateRoute>
+              <HistoryPage />
+            </PrivateRoute>
+          }
+        />
+        {/* Manager Routes */}
         <Route
           path="/manager"
           element={
