@@ -15,14 +15,14 @@ public class CorsGlobalConfiguration {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "https://your-production-fe.com","http://localhost:8080"));
-        config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, ...
-        config.addAllowedHeader("*"); // Cho phép mọi header
-        config.setAllowCredentials(true); // nếu không gửi cookie
+        config.addAllowedOrigin("http://localhost:8080"); // Swagger UI
+        config.addAllowedOrigin("http://localhost:3000"); // Frontend React (nếu có)
+        config.setAllowCredentials(true);
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
         return new CorsWebFilter(source);
     }
 }
