@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import AdminNavbar from "../../components/AdminNavbar";
+import { AdminNavbar } from "../../components/Navbar";
 
 const API_URL_BOOKS = "http://localhost:8080/api/books";
 const API_URL_CATEGORIES = "http://localhost:8080/api/categories";

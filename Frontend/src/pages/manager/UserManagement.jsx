@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import AdminNavbar from "/src/components/AdminNavbar";
+import { AdminNavbar } from "../../components/Navbar";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
