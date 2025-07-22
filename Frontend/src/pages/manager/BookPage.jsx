@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import AdminNavbar from "../components/AdminNavbar";
+import AdminNavbar from "../../components/AdminNavbar";
 
 const API_URL = "http://localhost:8080/api/books";
 

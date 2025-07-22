@@ -13,21 +13,22 @@ const LoginPage = () => {
     e.preventDefault();
     setError("");
 
-    const HeadersInit = {
-      "ngrok-skip-browser-warning": "true",
-      "Content-Type": "application/json",
-    };
     try {
       const res = await axios.post(
-        "https://336907d86ab7.ngrok-free.app/api/auth/login",
+        "http://localhost:8080/api/auth/login",
         null, // Request body rỗng
         {
           params: {
             email: email,
             password: password,
           },
-        },
-        { headers: HeadersInit }
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "ngrok-skip-browser-warning": "true",
+          },
+          credentials: "include",
+        }
       );
 
       localStorage.setItem("token", res.data);
@@ -48,7 +49,7 @@ const LoginPage = () => {
         <form onSubmit={handleLogin}>
           <div className="mb-3">
             <label className="form-label">Email</label>
-            <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" />
+            <input type="text" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" />
           </div>
           <div className="mb-3">
             <label className="form-label">Mật khẩu</label>
