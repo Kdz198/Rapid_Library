@@ -1,26 +1,17 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import BookPage from './pages/BookPage';
-<<<<<<< HEAD
-import LoginPage from './pages/LoginPage';
-import PrivateRoute from './components/PrivateRoute';
-import UserManagement from './pages/UserManagement';
-=======
->>>>>>> 55c356e263bd4314c7c4746e432b35728f4d5f47
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import BookPage from "./pages/BookPage";
+import BorrowerPage from "./pages/BorrowerPage";
+import LoginPage from "./pages/LoginPage";
+import UserManagement from "./pages/manager/UserManagement";
 
 function App() {
   return (
     <Router>
       <Routes>
-<<<<<<< HEAD
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={    
-          <PrivateRoute>
-            <BookPage />
-          </PrivateRoute>} />
-          <Route path="/users" element={<UserManagement />} />
-=======
         <Route path="/" element={<BookPage />} />
->>>>>>> 55c356e263bd4314c7c4746e432b35728f4d5f47
+        <Route path="/borrowers" element={<BorrowerPage />} />
+        <Route path="/users" element={<UserManagement />} />
       </Routes>
     </Router>
   );
