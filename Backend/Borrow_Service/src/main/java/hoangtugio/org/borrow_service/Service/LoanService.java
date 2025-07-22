@@ -48,13 +48,25 @@ public class LoanService {
 
     }
 
-    public void returnBook(int loanId) {
+    public boolean returnBook(int loanId) {
         Loan loan = loanRepository.findById(loanId).orElseThrow(() -> new RuntimeException("Loan not found"));
 
+        List<BookDTO> bookList = loan.getBooks().entrySet().stream()
+                .map(entry -> new BookDTO(entry.getKey(), entry.getValue()))
+                .toList();
         loan.setReturnDate(LocalDate.now());
-        loan.setStatus("RETURNED");
 
-        loanRepository.save(loan);
+        System.out.println(bookList);
+        System.out.println( "Borrowing books for user Email: " + loan.getUserEmail());
+        boolean result = Boolean.TRUE.equals(restTemplate.postForObject("http://BOOK-SERVICE/api/books/return", bookList, Boolean.class));
+        if ( result) {
+            loan.setStatus("RETURNED");
+            loanRepository.save(loan);
+            return true;
+
+        }
+
+        return false;
     }
 }
 

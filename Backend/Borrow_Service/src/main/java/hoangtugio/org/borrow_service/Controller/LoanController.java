@@ -29,8 +29,8 @@ public class LoanController {
     }
 
     @PostMapping("/return")
-    public void returnBook(@RequestParam int loanId) {
-        loanService.returnBook(loanId);}
+    public boolean returnBook(@RequestParam int loanId) {
+        return loanService.returnBook(loanId);}
 }
 
 
