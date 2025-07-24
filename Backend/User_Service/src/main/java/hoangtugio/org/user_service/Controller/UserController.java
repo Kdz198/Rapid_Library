@@ -50,6 +50,18 @@ public class UserController {
         if (existingUser == null) {
             throw new RuntimeException("User with email " + email + " not found");
         }
+        if (user.getPassword() == null)
+        {
+            user.setPassword(existingUser.getPassword()); // Preserve the existing password if not provided
+        }
+        if ( user.getRole() == null)
+        {
+            user.setRole(existingUser.getRole()); // Preserve the existing role if not provided
+        }
+        if ( user.getStatus() == null)
+        {
+            user.setStatus(existingUser.getStatus()); // Preserve the existing status if not provided
+        }
         // Update the user details
         return userService.update(user);
     }
