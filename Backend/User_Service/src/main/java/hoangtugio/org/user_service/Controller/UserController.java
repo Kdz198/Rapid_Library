@@ -44,8 +44,8 @@ public class UserController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PutMapping("/{email}")
-    public User updateUser(@PathVariable String email,  @RequestBody User user) {
+        @PutMapping("/{email}")
+        public User updateUser(@PathVariable String email,  @RequestBody User user) {
         User existingUser = userRepository.findByEmail(email).orElse(null);
         if (existingUser == null) {
             throw new RuntimeException("User with email " + email + " not found");

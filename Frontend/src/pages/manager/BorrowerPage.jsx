@@ -20,7 +20,7 @@ import {
   Legend,
 } from "chart.js";
 
-// Đăng ký các thành phần Chart.js
+// Register Chart.js components
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -45,14 +45,14 @@ const BorrowerPage = () => {
   const [expandedLoan, setExpandedLoan] = useState(null);
   const [isReturning, setIsReturning] = useState(null);
 
-  // Lấy danh sách sách và lịch sử mượn
+  // Fetch books and loan history
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
         const token = localStorage.getItem("token");
 
-        // Lấy danh sách sách
+        // Fetch books
         const booksResponse = await axios.get("http://localhost:8080/api/books", {
           headers: {
             "Content-Type": "application/json",
@@ -62,7 +62,7 @@ const BorrowerPage = () => {
         });
         setBooks(booksResponse.data);
 
-        // Lấy danh sách lịch sử mượn
+        // Fetch loans
         const loansResponse = await axios.get(API_URL, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -73,8 +73,8 @@ const BorrowerPage = () => {
         });
         setLoans(loansResponse.data);
       } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu:", error);
-        toast.error("Không thể lấy dữ liệu. Vui lòng thử lại.");
+        console.error("Error fetching data:", error);
+        toast.error("Failed to fetch data. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -83,7 +83,7 @@ const BorrowerPage = () => {
     fetchData();
   }, []);
 
-  // Lấy tiêu đề sách
+  // Get book titles
   const getBookTitles = (bookIds) => {
     return Object.keys(bookIds)
         .map((bookId) => {
@@ -93,7 +93,7 @@ const BorrowerPage = () => {
         .join(", ");
   };
 
-  // Lọc danh sách mượn
+  // Filter loans
   const filteredLoans = loans.filter((loan) => {
     const matchesSearch =
         Object.keys(loan.books).some((bookId) => {
@@ -105,7 +105,9 @@ const BorrowerPage = () => {
 
     const matchesStatus =
         selectedStatus === "All" ||
-        loan.status === (selectedStatus === "Borrowed" ? "BORROWED" : "RETURNED");
+        loan.status === (selectedStatus === "Borrowed" ? "BORROWED" :
+            selectedStatus === "Overdue" ? "OVERDUE" :
+                selectedStatus === "Returned" ? "RETURNED" : loan.status);
 
     const matchesDate =
         !selectedDate ||
@@ -114,7 +116,7 @@ const BorrowerPage = () => {
     return matchesSearch && matchesStatus && matchesDate;
   });
 
-  // Xử lý trả sách
+  // Handle book return
   const handleReturnBook = async (loanId) => {
     setIsReturning(loanId);
     try {
@@ -131,7 +133,7 @@ const BorrowerPage = () => {
             },
           }
       );
-      toast.success("Trả sách thành công!");
+      toast.success("Book returned successfully!");
       setLoans((prevLoans) =>
           prevLoans.map((loan) =>
               loan.id === loanId
@@ -140,20 +142,20 @@ const BorrowerPage = () => {
           )
       );
     } catch (error) {
-      console.error("Lỗi khi trả sách:", error);
-      toast.error("Lỗi khi trả sách. Vui lòng thử lại.");
+      console.error("Error returning book:", error);
+      toast.error("Failed to return book. Please try again.");
     } finally {
       setIsReturning(null);
     }
   };
 
-  // Toggle chi tiết khoản mượn
+  // Toggle loan details
   const toggleLoanDetails = (loanId) => {
     setExpandedLoan(expandedLoan === loanId ? null : loanId);
   };
 
-  // Dữ liệu cho biểu đồ
-  // 1. Top 5 sách mượn nhiều nhất
+  // Chart data
+  // 1. Top 5 most borrowed books
   const bookBorrowCount = {};
   loans.forEach((loan) => {
     Object.keys(loan.books).forEach((bookId) => {
@@ -172,7 +174,7 @@ const BorrowerPage = () => {
     labels: topBooks.map((book) => book.title),
     datasets: [
       {
-        label: "Số lần mượn",
+        label: "Borrow Count",
         data: topBooks.map((book) => book.count),
         backgroundColor: "rgba(99, 102, 241, 0.8)",
         borderColor: "rgba(99, 102, 241, 1)",
@@ -181,7 +183,7 @@ const BorrowerPage = () => {
     ],
   };
 
-  // 2. Số lượng mượn theo ngày trong tuần
+  // 2. Loans by day (last 7 days)
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - i);
@@ -196,7 +198,7 @@ const BorrowerPage = () => {
     labels: last7Days.map((date) => new Date(date).toLocaleDateString("vi-VN", { weekday: "short" })),
     datasets: [
       {
-        label: "Số khoản mượn",
+        label: "Number of Loans",
         data: loansByDay,
         fill: false,
         borderColor: "rgba(16, 185, 129, 1)",
@@ -205,19 +207,28 @@ const BorrowerPage = () => {
     ],
   };
 
-  // 3. Tỷ lệ trạng thái mượn
+  // 3. Loan status distribution
   const statusCount = {
     BORROWED: loans.filter((loan) => loan.status === "BORROWED").length,
+    OVERDUE: loans.filter((loan) => loan.status === "OVERDUE").length,
     RETURNED: loans.filter((loan) => loan.status === "RETURNED").length,
   };
 
   const pieChartData = {
-    labels: ["Đang mượn", "Đã trả"],
+    labels: ["Borrowed", "Overdue", "Returned"],
     datasets: [
       {
-        data: [statusCount.BORROWED, statusCount.RETURNED],
-        backgroundColor: ["rgba(234, 179, 8, 0.8)", "rgba(16, 185, 129, 0.8)"],
-        borderColor: ["rgba(234, 179, 8, 1)", "rgba(16, 185, 129, 1)"],
+        data: [statusCount.BORROWED, statusCount.OVERDUE, statusCount.RETURNED],
+        backgroundColor: [
+          "rgba(234, 179, 8, 0.8)",
+          "rgba(239, 68, 68, 0.8)",
+          "rgba(16, 185, 129, 0.8)"
+        ],
+        borderColor: [
+          "rgba(234, 179, 8, 1)",
+          "rgba(239, 68, 68, 1)",
+          "rgba(16, 185, 129, 1)"
+        ],
         borderWidth: 1,
       },
     ],
@@ -254,7 +265,7 @@ const BorrowerPage = () => {
             </div>
             <p className="text-sm text-slate-600 mb-3">Danh sách lịch sử mượn sách của toàn hệ thống</p>
 
-            {/* Biểu đồ thống kê */}
+            {/* Charts */}
             <div className="mb-6">
               <h2 className="text-lg font-semibold text-slate-800 mb-3">Thống Kê Mượn Sách</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -308,7 +319,7 @@ const BorrowerPage = () => {
               </div>
             </div>
 
-            {/* Bộ lọc */}
+            {/* Filters */}
             <div className="mb-3 grid grid-cols-1 md:grid-cols-2 gap-2">
               <div className="relative">
                 <input
@@ -356,7 +367,7 @@ const BorrowerPage = () => {
               </div>
             </div>
             <div className="mb-3 flex flex-wrap gap-2">
-              {["All", "Borrowed", "Returned"].map((status) => (
+              {["All", "Borrowed", "Overdue", "Returned"].map((status) => (
                   <button
                       key={status}
                       onClick={() => setSelectedStatus(status)}
@@ -366,12 +377,14 @@ const BorrowerPage = () => {
                               : "bg-white/80 border border-white/30 text-slate-800 hover:bg-indigo-100/80"
                       }`}
                   >
-                    {status === "All" ? "Tất cả" : status === "Borrowed" ? "Đang mượn" : "Đã trả"}
+                    {status === "All" ? "Tất cả" :
+                        status === "Borrowed" ? "Đang mượn" :
+                            status === "Overdue" ? "Quá hạn" : "Đã trả"}
                   </button>
               ))}
             </div>
 
-            {/* Danh sách */}
+            {/* Loan list */}
             {isLoading ? (
                 <div className="text-center py-4">
                   <svg
@@ -413,13 +426,16 @@ const BorrowerPage = () => {
                             <h3 className="font-semibold text-xs text-slate-800">#{loan.id}</h3>
                             <span
                                 className={`px-1.5 py-0.5 rounded-full text-xs font-semibold ${
-                                    loan.status === "BORROWED" ? "bg-yellow-500/80 text-white" : "bg-emerald-500/80 text-white"
+                                    loan.status === "BORROWED" ? "bg-yellow-500/80 text-white" :
+                                        loan.status === "OVERDUE" ? "bg-red-500/80 text-white" :
+                                            "bg-emerald-500/80 text-white"
                                 }`}
                             >
-                        {loan.status === "BORROWED" ? "Đang mượn" : "Đã trả"}
-                      </span>
+                              {loan.status === "BORROWED" ? "Đang mượn" :
+                                  loan.status === "OVERDUE" ? "Quá hạn" : "Đã trả"}
+                            </span>
                           </div>
-                          {loan.status === "BORROWED" && (
+                          {(loan.status === "BORROWED" || loan.status === "OVERDUE") && (
                               <button
                                   onClick={(e) => {
                                     e.stopPropagation();

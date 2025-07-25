@@ -2,8 +2,11 @@ package hoangtugio.org.borrow_service.Service;
 
 
 import hoangtugio.org.borrow_service.Model.Loan;
+import hoangtugio.org.borrow_service.RabbitMQ.Producer;
 import hoangtugio.org.borrow_service.Repository.LoanRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,6 +21,8 @@ public class LoanService {
     LoanRepository loanRepository;
     @Autowired
     RestTemplate restTemplate;
+    @Autowired
+    Producer producer;
 
     public List<Loan> getAllLoans() {
         return loanRepository.findAll();
@@ -67,6 +72,23 @@ public class LoanService {
         }
 
         return false;
+    }
+
+    @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
+    @Transactional
+    public void remind()
+    {
+        List<Loan> loans = loanRepository.findAll();
+        LocalDate today = LocalDate.now();
+        for (Loan loan : loans) {
+            if (loan.getDueDate().isBefore(today) && !loan.getStatus().equals("RETURNED")) {
+                // Logic to send reminder notification
+                producer.sendMessage( loan.getUserEmail(), loan.getBorrowDate(), loan.getDueDate());
+                System.out.println("Reminder: Loan with ID " + loan.getId() + " is overdue.");
+                loan.setStatus("OVERDUE");
+                loanRepository.save(loan);
+            }
+        }
     }
 }
 
